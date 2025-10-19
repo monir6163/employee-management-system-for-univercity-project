@@ -25,7 +25,32 @@ const getAllDepartment = catchAsync(async (req: Request, res: Response) => {
    });
 });
 
+const updateDepartment = catchAsync(async (req: Request, res: Response) => {
+   const result = await departmentServices.updateDepartment(req.body);
+   sendResponse<IDepartment>(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Department Update successfully..!!',
+      data: result,
+   });
+});
+
+const deleteDepartment = catchAsync(async (req: Request, res: Response) => {
+   const id = req.params;
+   const result = await departmentServices.deleteDepartment(
+      id as unknown as IDepartment
+   );
+   sendResponse<IDepartment>(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Department Delete successfully..!!',
+      data: result,
+   });
+});
+
 export const DepartmentController = {
    createDepartment,
    getAllDepartment,
+   updateDepartment,
+   deleteDepartment,
 };

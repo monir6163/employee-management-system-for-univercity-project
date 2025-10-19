@@ -19,4 +19,18 @@ router.get(
    DepartmentController.getAllDepartment
 );
 
+router.patch(
+   '/update-department',
+   auth('admin'),
+   validateRequest(DepartMentValidation.departmentUpdateZodSchema),
+   DepartmentController.updateDepartment
+);
+
+router.delete(
+   '/delete-department/:_id',
+   auth('admin'),
+   validateRequest(DepartMentValidation.departmentDeleteZodSchema),
+   DepartmentController.deleteDepartment
+);
+
 export const DepartmentRoutes = router;
