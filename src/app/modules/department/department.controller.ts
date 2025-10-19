@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { catchAsync } from '../../../shared/catchAsync';
 import { sendResponse } from '../../../shared/sendResponse';
-import { IDepartment } from './department.interface';
+import { IDepartment, IPaginatedDepartments } from './department.interface';
 import { departmentServices } from './department.services';
 
 const createDepartment = catchAsync(async (req: Request, res: Response) => {
@@ -16,8 +16,8 @@ const createDepartment = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllDepartment = catchAsync(async (req: Request, res: Response) => {
-   const result = await departmentServices.getAllDepartment();
-   sendResponse<IDepartment[] | null>(res, {
+   const result = await departmentServices.getAllDepartment(req.query);
+   sendResponse<IPaginatedDepartments | null>(res, {
       statusCode: StatusCodes.OK,
       success: true,
       message: 'Department fetch successfully..!!',

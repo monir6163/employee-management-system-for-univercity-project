@@ -1,7 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { Employee } from '../employee/employee.model';
-import { IDepartment } from './department.interface';
+import {
+   IDepartment,
+   IPaginatedDepartments,
+   IQuery,
+} from './department.interface';
 import { Department } from './department.model';
 
 const createDepartment = async (
@@ -15,9 +19,28 @@ const createDepartment = async (
    return result;
 };
 
-const getAllDepartment = async (): Promise<IDepartment[]> => {
-   const result = await Department.find();
-   return result;
+const getAllDepartment = async (
+   query: IQuery
+): Promise<IPaginatedDepartments> => {
+   const page = query.page && query.page > 0 ? query.page : 1;
+   const limit = query.limit && query.limit > 0 ? query.limit : 10;
+   const skip = (page - 1) * limit;
+
+   const searchFilter = query.search
+      ? { name: { $regex: query.search, $options: 'i' } }
+      : {};
+   const total = await Department.countDocuments(searchFilter);
+   const data = await Department.find(searchFilter).skip(skip).limit(limit);
+
+   const totalPages = Math.ceil(total / limit);
+
+   return {
+      data,
+      total,
+      page,
+      totalPages,
+      limit,
+   };
 };
 
 const updateDepartment = async (
