@@ -17,4 +17,19 @@ export type IEmployee = {
    phone: string;
    joinDate: Date;
 };
+
+export type IQueryEmployee = {
+   page?: number;
+   limit?: number;
+   search?: string;
+};
+
+export type IPaginatedEmployees = {
+   data: IEmployee[];
+   total: number;
+   page: number;
+   totalPages: number;
+   limit: number;
+};
+
 export type EmployeeModel = Model<IEmployee, Record<string, unknown>>;
