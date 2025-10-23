@@ -1,6 +1,7 @@
 import { Model, Types } from 'mongoose';
 
 export type IEmployee = {
+   _id: Types.ObjectId;
    userId: Types.ObjectId;
    departmentId: Types.ObjectId;
    name: string;

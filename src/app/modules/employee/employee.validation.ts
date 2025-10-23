@@ -53,6 +53,51 @@ const createEmployeeZodSchema = z.object({
    }),
 });
 
+const updateEmployeeZodSchema = z.object({
+   body: z.object({
+      _id: z.string({
+         required_error: 'Employee id is required',
+      }),
+      departmentId: z
+         .string({
+            required_error: 'Department ID is required',
+         })
+         .optional(),
+      name: z
+         .string({
+            required_error: 'Name is required',
+         })
+         .optional(),
+      designation: z
+         .string({
+            required_error: 'Designation is required',
+         })
+         .optional(),
+      phone: z
+         .string({
+            required_error: 'Phone number is required',
+         })
+         .optional(),
+      salary: z
+         .number({
+            required_error: 'Salary is required',
+         })
+         .optional(),
+      address: z
+         .string({
+            required_error: 'Address is required',
+         })
+         .optional(),
+      maritialStatus: z
+         .enum(['Single', 'Married'], {
+            required_error: 'Maritial status is required',
+         })
+         .optional(),
+      avatar: z.string().optional(),
+   }),
+});
+
 export const EmployeeValidation = {
    createEmployeeZodSchema,
+   updateEmployeeZodSchema,
 };

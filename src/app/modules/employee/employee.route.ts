@@ -18,4 +18,11 @@ router.get(
    EmployeeController.getAllEmployee
 );
 
+router.put(
+   '/update-employee',
+   auth('admin'),
+   validateRequest(EmployeeValidation.updateEmployeeZodSchema),
+   EmployeeController.updateEmployee
+);
+
 export const EmployeeRoutes = router;

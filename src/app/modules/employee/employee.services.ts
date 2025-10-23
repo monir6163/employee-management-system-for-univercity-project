@@ -52,10 +52,19 @@ const getAllEmployee = async (
    const limit = query.limit && query.limit > 0 ? query.limit : 10;
    const skip = (page - 1) * limit;
    const searchFilter = query.search
-      ? { employeeId: { $regex: query.search, $options: 'i' } }
+      ? {
+           $or: [
+              { employeeId: new RegExp(query.search, 'i') },
+              { phone: new RegExp(query.search, 'i') },
+           ],
+        }
       : {};
    const total = await Employee.countDocuments(searchFilter);
-   const data = await Employee.find(searchFilter).skip(skip).limit(limit);
+   const data = await Employee.find(searchFilter)
+      .skip(skip)
+      .limit(limit)
+      .populate('userId', 'name')
+      .populate('departmentId', 'name');
    const totalPages = Math.ceil(total / limit);
    return {
       data,
@@ -69,8 +78,34 @@ const getAllEmployee = async (
 const updateEmployee = async (
    payload: IEmployee
 ): Promise<IEmployee | null> => {
-   const result = payload;
-   return result;
+   if (!payload._id) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Employee id required');
+   }
+   const findEmployeeData = await Employee.findById({ _id: payload._id });
+   if (!findEmployeeData) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Employe Data Not Found');
+   }
+   const UserDataUpdate = await User.findByIdAndUpdate(
+      findEmployeeData.userId,
+      { name: payload.name },
+      { new: true }
+   );
+   const EmployeeDataUpdate = await Employee.findByIdAndUpdate(
+      findEmployeeData._id,
+      {
+         departmentId: payload.departmentId,
+         designation: payload.designation,
+         phone: payload.phone,
+         salary: payload.salary,
+         address: payload.address,
+         maritialStatus: payload.maritialStatus,
+         avatar: '',
+      }
+   );
+   if (!UserDataUpdate && !EmployeeDataUpdate) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Employee Update Faield');
+   }
+   return payload;
 };
 
 export const EmployeeServices = {
